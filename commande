@@ -1,0 +1,127 @@
+typedef enum e_token_type
+{
+        T_WORD,
+        T_DLESS,
+        T_LESS,
+        T_DGREAT,
+        T_GREAT,
+        T_PIPE,
+        T_O_PARENT,
+        T_C_PARENT,
+    T_STRING,
+    T_STRING_FRAGMENT,
+        T_AND,
+        T_OR,
+    T_ENV_VAR,
+    T_SINGLE_QUOTE,
+    T_DOUBLE_QUOTE,
+    T_WILDCARD,
+    T_EOF,
+}       t_token_type;
+
+typedef struct s_list
+{
+    char *token;
+    t_token_type type;
+    struct s_list *next; 
+
+}   t_list;
+
+
+// identifier le token
+
+#include <string.h>
+void identify_token_type(t_list *token)
+{
+    if (token == NULL || token->token == NULL)
+        return;
+
+    // Détermination du type de token 
+    if (strcmp(token->token, "<<") == 0)
+        token->type = T_DLESS;
+    else if (strcmp(token->token, "<") == 0)
+        token->type = T_LESS;
+    else if (strcmp(token->token, ">>") == 0)
+        token->type = T_DGREAT;
+    else if (strcmp(token->token, ">") == 0)
+        token->type = T_GREAT;
+    else if (strcmp(token->token, "|") == 0)
+        token->type = T_PIPE;
+    else if (strcmp(token->token, "(") == 0)
+        token->type = T_O_PARENT;
+    else if (strcmp(token->token, ")") == 0)
+        token->type = T_C_PARENT;
+    else if (strcmp(token->token, "&&") == 0)
+        token->type = T_AND;
+    else if (strcmp(token->token, "||") == 0)
+        token->type = T_OR;
+    else if (token->token[0] == '$')
+        token->type = T_ENV_VAR;
+    else if (strcmp(token->token, "'") == 0)
+        token->type = T_SINGLE_QUOTE;
+    else if (strcmp(token->token, "\"") == 0)
+        token->type = T_DOUBLE_QUOTE;
+    else if (strcmp(token->token, "*") == 0)
+        token->type = T_WILDCARD;
+    else
+        token->type = T_WORD; // Type par défaut ?
+
+    // Appel récursif pour le token suivant
+    if (token->next != NULL)
+        identify_token_type(token->next);
+}
+
+#include <stdbool.h>
+bool is_valid_command(t_list *tokens) 
+{
+    if (tokens == NULL) 
+        return false;
+
+    t_list *current = tokens;
+    bool command_found = false;        // Pour suivre si une commande a été trouvée
+
+    while (current != NULL) 
+    {
+        switch (current->type) 
+        {
+            case T_WORD:
+                if (!command_found) {
+                    command_found = true; // Première commande trouvée
+                } else {
+                    // Erreur : Deux commandes sans séparateur
+                    return false;
+                }
+                break;
+            case T_PIPE:
+                if (!command_found || current->next == NULL || current->next->type != T_WORD) {
+                    // Erreur : Pipe sans commande avant ou après
+                    return false;
+                }
+                command_found = false; // Réinitialiser pour la prochaine commande après le pipe
+                break;
+            case T_LESS:
+            case T_GREAT:
+            case T_DLESS:
+            case T_DGREAT:
+                if (!command_found || current->next == NULL) {
+                    // Erreur : Redirection sans commande ou sans fichier cible
+                    return false;
+                }
+                break;
+        }
+        current = current->next;
+    }
+
+    return command_found;
+}
+
+
+void token_type(t_list *head)
+{
+    t_list *current = head;
+    while (current != NULL)
+    {
+        identify_token_type(current);
+        current = current->next;
+    }
+}
