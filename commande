@@ -1,127 +1,107 @@
-typedef enum e_token_type
-{
-        T_WORD,
-        T_DLESS,
-        T_LESS,
-        T_DGREAT,
-        T_GREAT,
-        T_PIPE,
-        T_O_PARENT,
-        T_C_PARENT,
-    T_STRING,
-    T_STRING_FRAGMENT,
-        T_AND,
-        T_OR,
-    T_ENV_VAR,
-    T_SINGLE_QUOTE,
-    T_DOUBLE_QUOTE,
-    T_WILDCARD,
-    T_EOF,
-}       t_token_type;
+#include "minishell.h"
 
-typedef struct s_list
-{
-    char *token;
-    t_token_type type;
-    struct s_list *next; 
-
-}   t_list;
-
+void print_token_type(t_token_type type);
 
 // identifier le token
 
 #include <string.h>
-void identify_token_type(t_list *token)
+void	identify_token_type(t_list *token)
 {
-    if (token == NULL || token->token == NULL)
-        return;
-
-    // Détermination du type de token 
-    if (strcmp(token->token, "<<") == 0)
-        token->type = T_DLESS;
-    else if (strcmp(token->token, "<") == 0)
-        token->type = T_LESS;
-    else if (strcmp(token->token, ">>") == 0)
-        token->type = T_DGREAT;
-    else if (strcmp(token->token, ">") == 0)
-        token->type = T_GREAT;
-    else if (strcmp(token->token, "|") == 0)
-        token->type = T_PIPE;
-    else if (strcmp(token->token, "(") == 0)
-        token->type = T_O_PARENT;
-    else if (strcmp(token->token, ")") == 0)
-        token->type = T_C_PARENT;
-    else if (strcmp(token->token, "&&") == 0)
-        token->type = T_AND;
-    else if (strcmp(token->token, "||") == 0)
-        token->type = T_OR;
-    else if (token->token[0] == '$')
-        token->type = T_ENV_VAR;
-    else if (strcmp(token->token, "'") == 0)
-        token->type = T_SINGLE_QUOTE;
-    else if (strcmp(token->token, "\"") == 0)
-        token->type = T_DOUBLE_QUOTE;
-    else if (strcmp(token->token, "*") == 0)
-        token->type = T_WILDCARD;
-    else
-        token->type = T_WORD; // Type par défaut ?
-
-    // Appel récursif pour le token suivant
-    if (token->next != NULL)
-        identify_token_type(token->next);
+	if (token == NULL || token->token == NULL)
+		return ;
+	// Détermination du type de token
+	if (strncmp(token->token, "<<", 2) == 0)
+		token->type = T_DLESS;
+	else if (strncmp(token->token, "<", 1) == 0)
+		token->type = T_LESS;
+	else if (strncmp(token->token, ">>", 2) == 0)
+		token->type = T_DGREAT;
+	else if (strncmp(token->token, ">", 1) == 0)
+		token->type = T_GREAT;
+	else if (strncmp(token->token, "||", 2) == 0)
+		token->type = T_OR;
+	else if (strncmp(token->token, "|", 1) == 0)
+		token->type = T_PIPE;
+	else if (strncmp(token->token, "(", 1) == 0)
+		token->type = T_O_PARENT;
+	else if (strncmp(token->token, ")", 1) == 0)
+		token->type = T_C_PARENT;
+	else if (strncmp(token->token, "&&", 2) == 0)
+		token->type = T_AND;
+	else if (token->token[0] == '$')
+		token->type = T_ENV_VAR;
+	else if (strncmp(token->token, "'", 1) == 0)
+		token->type = T_SINGLE_QUOTE;
+	else if (token->token[0] == '"')
+		token->type = T_DOUBLE_QUOTE;
+	else if (strncmp(token->token, "*", 1) == 0)
+		token->type = T_WILDCARD;
+	else if (strncmp(token->token, "$?", 2) == 0)
+		token->type = T_PREV_STATUS;
+	else if (strncmp(token->token, "&", 1) == 0)
+		token->type = T_SINGLE_AND;
+	else if (strncmp(token->token, "-1", 2) == 0)
+		token->type = T_EOF;
+	else if (strncmp(token->token, "cd", 2) == 0)
+		token->type = T_CD;
+	else if (strncmp(token->token, "echo", 4) == 0)
+		token->type = T_ECHO;
+	else if (strncmp(token->token, "env", 3) == 0)
+		token->type = T_ENV;
+	else if (strncmp(token->token, "exit", 4) == 0)
+		token->type = T_EXIT;
+	else if (strncmp(token->token, "export", 6) == 0)
+		token->type = T_EXPORT;
+	else if (strncmp(token->token, "pwd", 3) == 0)
+		token->type = T_PWD;
+	else if (strncmp(token->token, "unset", 5) == 0)
+		token->type = T_UNSET;
+	else
+		token->type = T_WORD; // Type par défaut ?
+	// Appel récursif pour le token suivant
+	if (token->next != NULL)
+		identify_token_type(token->next);
 }
 
 #include <stdbool.h>
-bool is_valid_command(t_list *tokens) 
+
+void	token_type(t_list *head)
 {
-    if (tokens == NULL) 
-        return false;
+	t_list	*current;
 
-    t_list *current = tokens;
-    bool command_found = false;        // Pour suivre si une commande a été trouvée
+	current = head;
+	while (current != NULL)
+	{
+		identify_token_type(current);
+		printf(" token : %s type : ", current->token);
+		print_token_type(current->type);
+		current = current->next;
+	}
+}
 
-    while (current != NULL) 
-    {
-        switch (current->type) 
-        {
-            case T_WORD:
-                if (!command_found) {
-                    command_found = true; // Première commande trouvée
-                } else {
-                    // Erreur : Deux commandes sans séparateur
-                    return false;
-                }
-                break;
-            case T_PIPE:
-                if (!command_found || current->next == NULL || current->next->type != T_WORD) {
-                    // Erreur : Pipe sans commande avant ou après
-                    return false;
-                }
-                command_found = false; // Réinitialiser pour la prochaine commande après le pipe
-                break;
-            case T_LESS:
-            case T_GREAT:
-            case T_DLESS:
-            case T_DGREAT:
-                if (!command_found || current->next == NULL) {
-                    // Erreur : Redirection sans commande ou sans fichier cible
-                    return false;
-                }
-                break;
+int main() {
+    char *input_line;
+    char *token;
+    const char *delim = " ";
+
+    while (1) {
+        input_line = readline("minishell> ");
+        if (!input_line)
+            break;
+        t_list *head = NULL;
+        token = strtok(input_line, delim);
+        while (token != NULL) {
+            add_token_to_list(&head, token);
+            token = strtok(NULL, delim);
         }
-        current = current->next;
+		token_type(head);
+        t_list *current = head;
+		
+        free_list(head);
+        free(input_line);
     }
 
-    return command_found;
+    return 0;
 }
 
 
-void token_type(t_list *head)
-{
-    t_list *current = head;
-    while (current != NULL)
-    {
-        identify_token_type(current);
-        current = current->next;
-    }
-}
