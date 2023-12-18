@@ -120,9 +120,76 @@ Pour parse_simple_command, 2 cas :
 	2. commande avec des "()" qu'il faut renvoyer a and_or.
 
 */
-t_ast_node	*parse_simple_command(t_list **tokens)
+t_ast_node *new_ast_node(t_parser_type type, char *value) 
 {
-	t_ast_node	*node;
-	
-	return (node);
+    t_ast_node *node = malloc(sizeof(t_ast_node));
+    if (!node) return NULL;
+
+    node->type = type;
+    node->value = value ? strdup(value) : NULL;
+    node->left = NULL;
+    node->right = NULL;
+
+    return node;
 }
+
+t_ast_node *parse_simple_command(t_list **tokens) {
+    t_ast_node *command_node = NULL;
+    t_ast_node *current_node = NULL;
+
+    while (*tokens != NULL) 
+    {
+        if ((*tokens)->type == T_WORD) 
+        {
+            if (!command_node) 
+            {
+                command_node = new_ast_node(SIMPLE_COMMAND, (*tokens)->token);
+                current_node = command_node;
+            } else 
+            {
+                t_ast_node *arg_node = new_ast_node(COMMAND, (*tokens)->token);
+                current_node->right = arg_node;
+                current_node = arg_node;
+            }
+        }
+        else if ((*tokens)->type == T_O_PARENT) 
+        {
+            *tokens = (*tokens)->next;  // Passer la parenthèse ouvrante
+
+            // Appeler parse_and_or pour traiter la commande à l'intérieur des parenthèses
+            t_ast_node *sub_command = parse_and_or(tokens);
+
+            // Vérifier que la commande entre parenthèses a été correctement analysée
+            if (!sub_command) {
+                return NULL;
+        }
+
+        // Si c'est la première commande, créer le nœud command_node
+        if (!command_node) {
+            command_node = sub_command;
+        } else {
+            // Sinon, l'ajouter comme argument de la commande actuelle
+            t_ast_node *arg_node = new_ast_node(COMMAND, NULL);
+            arg_node->left = sub_command;
+            current_node->right = arg_node;
+            current_node = arg_node;
+        }
+        while (*tokens != NULL && (*tokens)->type != T_C_PARENT) {
+            *tokens = (*tokens)->next;
+        }
+
+        if (*tokens == NULL) {
+            // Parenthèse fermante manquante
+            return NULL;
+        }
+
+        *tokens = (*tokens)->next;  // Passer la parenthèse fermante
+}
+     else
+         break;
+    *tokens = (*tokens)->next;  // Avancer au token suivant
+    }
+
+    return command_node;
+}
+
