@@ -5,7 +5,6 @@
 
 t_ast_node *new_and_or_node(t_parser_type type, t_ast_node *left, t_ast_node *right) 
 {
-    
     if (left == NULL || right == NULL) 
     {
         return NULL;
@@ -13,9 +12,10 @@ t_ast_node *new_and_or_node(t_parser_type type, t_ast_node *left, t_ast_node *ri
     t_ast_node *new_node = malloc(sizeof(t_ast_node));
     if (!new_node) 
         return NULL;
-
-
-    new_node->value = NULL;
+    if (type == AND)    
+        new_node->value = "&&";
+    else
+        new_node->value = "||";
     new_node->left = left;
     new_node->right = right;
     for (int i = 0; i < MAX_REDIRECTIONS; i++) {
@@ -42,7 +42,7 @@ t_ast_node *new_pipeline_node(t_ast_node *left, t_ast_node *right)
     t_ast_node *new_node = malloc(sizeof(t_ast_node));
     if (!new_node) 
         return NULL;
-    new_node->value = NULL;
+    new_node->value = "|";
     new_node->left = left;
     new_node->right = right;
     for (int i = 0; i < MAX_REDIRECTIONS; i++) {

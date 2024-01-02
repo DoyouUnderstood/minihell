@@ -137,10 +137,9 @@ int main()
 
         t_ast_node *ast = parse_and_or(&parser);
         print_ast(ast, 0);
-
-        free_ast_node(ast);
-        free_list(head);
-        free(input_line);
+        // free_ast_node(ast);
+        // free_list(head);
+        // free(input_line);
     }
 
     return 0;
