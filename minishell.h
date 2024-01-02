@@ -6,7 +6,7 @@
 /*   By: alletond <alletond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 16:08:18 by alletond          #+#    #+#             */
-/*   Updated: 2023/12/16 19:24:24 by alletond         ###   ########.fr       */
+/*   Updated: 2024/01/02 17:43:26 by alletond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ typedef struct s_ast_node
 	t_parser_type		type;
 }						t_ast_node;
 
-typedef struct s_parser {
+typedef struct s_parser 
+{
     t_list *token_list;
     t_list *current;
     t_list *previous;

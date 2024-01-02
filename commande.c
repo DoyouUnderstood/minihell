@@ -133,12 +133,12 @@ int main()
         t_parser parser;
         parser.token_list = head;
         parser.current = head;
-        parser.previous = NULL; // Assurez-vous d'initialiser correctement previous
+        parser.previous = NULL;
 
-        t_ast_node *ast = parse_and_or(&parser); // Utilisation de t_parser
+        t_ast_node *ast = parse_and_or(&parser);
         print_ast(ast, 0);
 
-        free_ast_node(ast); // Assurez-vous de libérer correctement l'AST
+        free_ast_node(ast);
         free_list(head);
         free(input_line);
     }
