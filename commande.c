@@ -36,34 +36,16 @@ void	identify_token_type(t_list *token)
 		token->type = T_C_PARENT;
 	else if (strncmp(token->token, "&&", 2) == 0)
 		token->type = T_AND;
-	else if (token->token[0] == '$')
-		token->type = T_ENV_VAR;
-	else if (strncmp(token->token, "'", 1) == 0)
-		token->type = T_SINGLE_QUOTE;
-	else if (token->token[0] == '"')
-		token->type = T_DOUBLE_QUOTE;
+	// else if (token->token[0] == '$')
+	// 	token->type = T_ENV_VAR;
+	// else if (strncmp(token->token, "'", 1) == 0)
+	// 	token->type = T_SINGLE_QUOTE;
+	// else if (token->token[0] == '"')
+	// 	token->type = T_DOUBLE_QUOTE;s
 	else if (strncmp(token->token, "*", 1) == 0)
 		token->type = T_WILDCARD;
 	else if (strncmp(token->token, "$?", 2) == 0)
 		token->type = T_PREV_STATUS;
-	else if (strncmp(token->token, "&", 1) == 0)
-		token->type = T_SINGLE_AND;
-	else if (strncmp(token->token, "-1", 2) == 0)
-		token->type = T_EOF;
-	else if (strncmp(token->token, "cd", 2) == 0)
-		token->type = T_CD;
-	else if (strncmp(token->token, "echo", 4) == 0)
-		token->type = T_ECHO;
-	else if (strncmp(token->token, "env", 3) == 0)
-		token->type = T_ENV;
-	else if (strncmp(token->token, "exit", 4) == 0)
-		token->type = T_EXIT;
-	else if (strncmp(token->token, "export", 6) == 0)
-		token->type = T_EXPORT;
-	else if (strncmp(token->token, "pwd", 3) == 0)
-		token->type = T_PWD;
-	else if (strncmp(token->token, "unset", 5) == 0)
-		token->type = T_UNSET;
 	else
 		token->type = T_WORD; // Type par défaut ?
 	// Appel récursif pour le token suivant
@@ -79,6 +61,7 @@ void	token_type(t_list *head)
 	while (current != NULL)
 	{
 		identify_token_type(current);
+		//printf("token :%stype : %u\n",current->token, current->type);
 		current = current->next;
 	}
 }
@@ -136,6 +119,11 @@ int main()
         parser.previous = NULL;
 
         t_ast_node *ast = parse_and_or(&parser);
+		if (!ast)
+		{
+			printf("error\n");
+			return 0;
+		}
         print_ast(ast, 0);
         // free_ast_node(ast);
         // free_list(head);

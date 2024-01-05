@@ -6,7 +6,7 @@
 /*   By: alletond <alletond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 16:08:18 by alletond          #+#    #+#             */
-/*   Updated: 2024/01/02 17:43:26 by alletond         ###   ########.fr       */
+/*   Updated: 2024/01/05 15:20:01 by alletond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,20 @@ typedef enum parser_type
 #define MAX_REDIRECTIONS 10
 #define MAX_ARGUMENTS 10
 
-// redirection 
+typedef enum e_redirection_type
+{
+	E_DLESS,  
+	E_LESS,   
+	E_DGREAT, 
+	E_GREAT,  
+}	t_redirection_type;
+
+
+// redirection
 typedef struct s_redirection 
 {
-    char *type;
-    char *file; // Nom du fichier.
+	t_redirection_type type;
+    char *file;
 } s_redirection;
 
 // parser struct
@@ -131,6 +140,7 @@ t_list *peek_next(t_parser *parser);
 t_list *peek(t_parser *parser);
 int	is_valid_redirection_token(t_token_type type);
 void print_ast(const t_ast_node *node, int level);
+t_redirection_type redi_type(const char *type);
 
 
 //constructeur

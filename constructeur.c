@@ -102,7 +102,6 @@ void free_ast_node(t_ast_node *node) {
     for (int i = 0; i < node->num_redirections; i++) {
         if (node->redirections[i]) {
             // Supposons que s_redirection est une structure simple
-            free(node->redirections[i]->type);
             free(node->redirections[i]->file);
             free(node->redirections[i]);
         }

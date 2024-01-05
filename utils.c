@@ -62,6 +62,23 @@ int	is_valid_redirection_token(t_token_type type)
 	return (0);
 }
 
+t_redirection_type redi_type(const char *type)
+{
+    if (strcmp(type, "<<") == 0)
+        return E_DLESS;
+    else if (strcmp(type, "<") == 0)
+        return E_LESS;
+    else if (strcmp(type, ">>") == 0)
+        return E_DGREAT;
+    else if (strcmp(type, ">") == 0)
+        return E_GREAT;
+    else
+    {
+        printf("errrrror\n");
+        exit(1);
+    }
+}
+
 void print_ast(const t_ast_node *node, int level) 
 {
     if (node == NULL) {
@@ -85,7 +102,7 @@ void print_ast(const t_ast_node *node, int level)
     // Imprimer les redirections
     for (int i = 0; i < node->num_redirections; i++) {
         for (int j = 0; j < level + 1; j++) printf("  ");
-        printf("Redirection: %s -> %s\n", node->redirections[i]->type, node->redirections[i]->file);
+        printf("Redirection: %u -> %s\n", node->redirections[i]->type, node->redirections[i]->file);
     }
 
     // Imprimer récursivement les nœuds gauche et droit

@@ -31,7 +31,7 @@ void add_redirection(t_ast_node *node, const char *type, const char *file)
         exit(0);
     }
     s_redirection *redirection = malloc(sizeof(s_redirection));
-    redirection->type = strdup(type);
+    redirection->type = redi_type(type);
     redirection->file = strdup(file);
 
     node->redirections[node->num_redirections++] = redirection;
