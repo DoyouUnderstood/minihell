@@ -11,7 +11,7 @@ CFLAGS =
 LDFLAGS = -lreadline
 
 # Liste des fichiers source
-SRCS = commande.c constructeur.c parser2.c redirection.c utils.c
+SRCS = commande.c constructeur.c parser.c redirection.c utils.c
 
 # Liste des fichiers objets (remplacement de .c par .o)
 OBJS = $(SRCS:.c=.o)
