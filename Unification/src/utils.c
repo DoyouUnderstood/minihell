@@ -77,8 +77,23 @@ t_redirection_type redi_type(const char *type)
         return E_GREAT;
     else
     {
-        printf("errrrror\n");
+        printf("error\n");
         exit(1);
+    }
+}
+t_redirection_type token_to_redirection_type(t_token_type type) {
+    switch (type) {
+        case T_LESS_LESS:
+            return E_DLESS;
+        case T_LESS:
+            return E_LESS;
+        case T_GREAT_GREAT:
+            return E_DGREAT;
+        case T_GREAT:
+            return E_GREAT;
+        default:
+            // Gérer l'erreur si nécessaire
+            return E_LESS; // Retournez une valeur par défaut ou gérez l'erreur
     }
 }
 
@@ -109,3 +124,15 @@ void print_ast(const t_ast_node *node, int level) {
     print_ast(node->right, level + 1);
 }
 
+void print_token_types(t_token_list *tokens) {
+    while (tokens != NULL) 
+    {
+        printf("lexeme : %s\n", tokens->token->lexeme);
+        if (tokens->token != NULL) {
+            printf("Token type: %d\n", tokens->token->type);
+        } else {
+            printf("Token is NULL\n");
+        }
+        tokens = tokens->next;
+    }
+}

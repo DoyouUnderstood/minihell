@@ -6,7 +6,7 @@
 /*   By: alletond <alletond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 16:08:18 by alletond          #+#    #+#             */
-/*   Updated: 2024/01/08 15:35:20 by alletond         ###   ########.fr       */
+/*   Updated: 2024/01/08 17:10:18 by alletond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@
 # include <stdbool.h>
 # include <unistd.h>
 # include "_minishell.h"
+
+
+// COMMANDE A CORRIGER : > cat missingfile.txt 2> error.log
 
 // Enum parser.
 typedef enum parser_type
@@ -93,6 +96,7 @@ t_token_list *peek(t_token_list *parser);
 int	is_valid_redirection_token(t_token_type type);
 void print_ast(const t_ast_node *node, int level);
 t_redirection_type redi_type(const char *type);
+t_redirection_type token_to_redirection_type(t_token_type type);
 
 
 //constructeur
@@ -104,8 +108,8 @@ void free_ast_node(t_ast_node *node);
 
 //argument et redirection
 void handle_argument(t_token_list **parser, t_ast_node *cmd_node);
-void handle_redirection(t_token_list **parser, t_ast_node *cmd_node); 
-void add_redirection(t_ast_node *node, const char *type, const char *file);
+int handle_redirection(t_token_list **parser, t_ast_node *cmd_node); 
+void add_redirection(t_ast_node *node, t_redirection_type type, const char *file);
 void add_argument_to_command(t_ast_node *cmd_node, char *argument);
 
 void    free_list(t_list *head);
@@ -116,4 +120,3 @@ void    add_token_to_list(t_list **head, char *token);
 void print_token_types(t_token_list *tokens);
 
 #endif
-
