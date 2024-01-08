@@ -1,15 +1,10 @@
 #include "minishell.h"
 
-// le pointeur est toujours a la meme position c'est pour cela que c'est toujours faux dans match 
 bool match(t_token_list **parser, t_token_type type) 
 {
-    // printf("values : %s\n type : %d\n",(*parser)->token->lexeme,type);
     if (check(*parser, type)) 
     {
-        // printf("WWWWWwWWWWWWWWWWWW");
-        // printf("PARSER : %s\n", (*parser)->token->lexeme);
         advance(parser);
-        // printf("PARSER : %s\n", (*parser)->token->lexeme);
         return true;
     }
     return false;
@@ -27,10 +22,8 @@ t_token_list *consume(t_token_list **parser, t_token_type type)
     return NULL;
 }
 
-// le pointeur est toujours a la meme position c'est pour cela que c'est toujours faux dans match 
 bool check(t_token_list *parser, t_token_type type)
 {
-    //print_token_types(parser);
     if (parser == NULL || parser->token == NULL) 
         return false;
     return (parser->token->type == type);

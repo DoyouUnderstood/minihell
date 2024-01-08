@@ -6,7 +6,7 @@
 /*   By: alletond <alletond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 16:08:18 by alletond          #+#    #+#             */
-/*   Updated: 2024/01/06 21:05:13 by alletond         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:35:20 by alletond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef enum e_redirection_type
 	E_GREAT,  
 }	t_redirection_type;
 
- // Liste chaînée de redirection.
+// Liste chaînée de redirection.
 typedef struct s_redirection 
 {
     t_redirection_type type;
@@ -108,10 +108,10 @@ void handle_redirection(t_token_list **parser, t_ast_node *cmd_node);
 void add_redirection(t_ast_node *node, const char *type, const char *file);
 void add_argument_to_command(t_ast_node *cmd_node, char *argument);
 
-void free_list(t_list *head);
+void    free_list(t_list *head);
 void	identify_token_type(t_list *token);
 void	token_type(t_list *head);
-void add_token_to_list(t_list **head, char *token);
+void    add_token_to_list(t_list **head, char *token);
 
 void print_token_types(t_token_list *tokens);
 

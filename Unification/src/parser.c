@@ -47,17 +47,27 @@ t_ast_node *parse_pipeline(t_token_list **parser)
     return (node);
 }
 
-t_ast_node *parse_command(t_token_list **parser) 
-{
-    if (peek(*parser)->token->type != T_WORD) 
+t_ast_node *parse_command(t_token_list **parser) {
+    t_ast_node *cmd_node = NULL;
+
+    while (is_redirection(peek(*parser))) {
+        handle_redirection(parser, cmd_node);
+    }
+
+    if (peek(*parser)->token->type == T_WORD) {
+        cmd_node = new_command_node(peek(*parser)->token->lexeme);
+        if (!cmd_node)
+            return (NULL);
+        advance(parser);
+        handle_argument(parser, cmd_node);
+    } else {
+        // Gérer l'erreur ou le cas où il n'y a pas de commande simple
         return NULL;
-    t_ast_node *cmd_node = new_command_node(peek(*parser)->token->lexeme);
-    if (!cmd_node)
-        return (NULL);
-    advance(parser);
-    // Gérer les arguments de la commande
-    handle_argument(parser, cmd_node);
-    // Gérer les redirections
-    handle_redirection(parser, cmd_node);
-    return (cmd_node);
+    }
+
+    while (is_valid_redirection_token(peek(*parser))) {
+        handle_redirection(parser, cmd_node);
+    }
+
+    return cmd_node;
 }
