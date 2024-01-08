@@ -97,4 +97,3 @@ void free_ast_node(t_ast_node *node)
     }
     free(node);
 }
-

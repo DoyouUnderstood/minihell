@@ -2,7 +2,6 @@
 
 t_ast_node *parse_and_or(t_token_list **parser) 
 {
-    print_token_types(*parser);
     t_parser_type type;
     t_ast_node *node = parse_pipeline(parser);
     if (!node)
@@ -37,16 +36,17 @@ t_ast_node *parse_pipeline(t_token_list **parser)
     return (node);
 }
 
-t_ast_node *parse_command(t_token_list **parser) {
+t_ast_node *parse_command(t_token_list **parser) 
+{
     t_ast_node *cmd_node = NULL;
 
-    while (*parser != NULL && is_valid_redirection_token(peek(*parser)->token->type)) {
+    while (*parser != NULL && is_valid_redirection_token(peek(*parser)->token->type)) 
+    {
         if (!handle_redirection(parser, cmd_node)) {
             // Gérer l'erreur
             break;
         }
     }
-
     if (peek(*parser)->token->type == T_WORD) {
         cmd_node = new_command_node(peek(*parser)->token->lexeme);
         if (!cmd_node)
@@ -57,11 +57,35 @@ t_ast_node *parse_command(t_token_list **parser) {
         // Gérer l'erreur
         return NULL;
     }
-
     while (is_valid_redirection_token(peek(*parser)->token->type)) {
         handle_redirection(parser, cmd_node);
     }
-
     return cmd_node;
+}
+
+
+// Fonction Paranthese TEST a paufiney
+
+
+t_ast_node *parse_subshell(t_token_list **parser) {
+    if (current_token_is(T_PAREN_OPEN)) {
+        advance(parser); // Passer la parenthèse ouvrante
+
+        t_ast_node *subshell_node = create_new_ast_node("SUBSHELL");
+
+        while (!current_token_is(T_PAREN_CLOSE) && !is_at_end(*parser)) {
+            t_ast_node *cmd = parse_command(parser); // Appel récursif ou sous-section du parseur
+            add_child_to_subshell(subshell_node, cmd);
+        }
+
+        if (!current_token_is(T_PAREN_CLOSE)) {
+            return (NULL);
+        }
+        advance(parser);
+
+        return subshell_node;
+    }
+
+    return NULL;
 }
 
