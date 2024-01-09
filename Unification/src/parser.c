@@ -38,8 +38,9 @@ t_ast_node *parse_pipeline(t_token_list **parser)
 
 t_ast_node *parse_command(t_token_list **parser) 
 {
-    t_ast_node *cmd_node = NULL;
-
+    t_ast_node *cmd_node = parse_subshell(parser);
+    if (cmd_node)
+        return cmd_node;
     while (*parser != NULL && is_valid_redirection_token(peek(*parser)->token->type)) 
     {
         if (!handle_redirection(parser, cmd_node)) {
@@ -63,29 +64,24 @@ t_ast_node *parse_command(t_token_list **parser)
     return cmd_node;
 }
 
-
 // Fonction Paranthese TEST a paufiney
 
-
-t_ast_node *parse_subshell(t_token_list **parser) {
-    if (current_token_is(T_PAREN_OPEN)) {
+t_ast_node *parse_subshell(t_token_list **parser) 
+{
+    if ((*parser)->token->type == T_PAREN_OPEN) 
+    {
         advance(parser); // Passer la parenthèse ouvrante
+        t_ast_node *subshell_node = parse_and_or(parser);
 
-        t_ast_node *subshell_node = create_new_ast_node("SUBSHELL");
-
-        while (!current_token_is(T_PAREN_CLOSE) && !is_at_end(*parser)) {
-            t_ast_node *cmd = parse_command(parser); // Appel récursif ou sous-section du parseur
-            add_child_to_subshell(subshell_node, cmd);
+        // Vérifiez si le token actuel est une parenthèse fermante
+        if ((*parser)->token->type != T_PAREN_CLOSE) {
+            // Gérer l'erreur
+            free_ast_node(subshell_node);
+            return NULL;
         }
-
-        if (!current_token_is(T_PAREN_CLOSE)) {
-            return (NULL);
-        }
-        advance(parser);
-
+        advance(parser); // Passer la parenthèse fermante
         return subshell_node;
     }
-
-    return NULL;
+    // traiter si le token actuel n'est pas une parenthèse ouvrante,
+    return NULL; 
 }
-

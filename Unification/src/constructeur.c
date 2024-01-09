@@ -74,8 +74,8 @@ t_ast_node *new_command_node(char *value)
 
 void free_ast_node(t_ast_node *node) 
 {
-    if (node == NULL) 
         return;
+    if (node == NULL) 
     free_ast_node(node->left);
     free_ast_node(node->right);
     if (node->value) {

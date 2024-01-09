@@ -6,7 +6,7 @@
 /*   By: alletond <alletond@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 16:08:18 by alletond          #+#    #+#             */
-/*   Updated: 2024/01/08 17:10:18 by alletond         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:49:52 by alletond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void					add_token_to_list(t_list **head, char *token);
 t_ast_node *parse_pipeline(t_token_list **parser);
 t_ast_node *parse_and_or(t_token_list **parser);
 t_ast_node *parse_command(t_token_list **parser);
+t_ast_node *parse_subshell(t_token_list **parser);
 
 //utils 
 bool is_at_end(t_token_list *parser);

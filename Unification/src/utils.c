@@ -43,7 +43,8 @@ t_token_list *peek_next(t_token_list *parser)
     return parser->next;
 }
 
-t_token_list *peek(t_token_list *parser) {
+t_token_list *peek(t_token_list *parser) 
+{
     return parser;
 }
 
