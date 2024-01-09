@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+// VERIFICATION LIBERATION MEMOIRE
+
 t_ast_node *parse_and_or(t_token_list **parser) 
 {
     t_parser_type type;
@@ -16,6 +18,8 @@ t_ast_node *parse_and_or(t_token_list **parser)
         else
             type = OR;
         t_ast_node *right = parse_pipeline(parser);
+        if (!right)
+            return (NULL);
         node = new_and_or_node(type, node, right);
     }
     return (node);
@@ -52,7 +56,8 @@ t_ast_node *parse_command(t_token_list **parser)
         cmd_node = new_command_node(peek(*parser)->token->lexeme);
         if (!cmd_node)
             return (NULL);
-        advance(parser);
+        if ((*parser)->token != NULL)
+            advance(parser);
         handle_argument(parser, cmd_node);
     } else {
         // Gérer l'erreur
@@ -61,7 +66,7 @@ t_ast_node *parse_command(t_token_list **parser)
     while (is_valid_redirection_token(peek(*parser)->token->type)) {
         handle_redirection(parser, cmd_node);
     }
-    return cmd_node;
+    return (cmd_node);
 }
 
 // Fonction Paranthese TEST a paufiney
@@ -72,6 +77,8 @@ t_ast_node *parse_subshell(t_token_list **parser)
     {
         advance(parser); // Passer la parenthèse ouvrante
         t_ast_node *subshell_node = parse_and_or(parser);
+        if (!subshell_node)
+            return (NULL);
 
         // Vérifiez si le token actuel est une parenthèse fermante
         if ((*parser)->token->type != T_PAREN_CLOSE) {
@@ -80,7 +87,7 @@ t_ast_node *parse_subshell(t_token_list **parser)
             return NULL;
         }
         advance(parser); // Passer la parenthèse fermante
-        return subshell_node;
+        return (subshell_node);
     }
     // traiter si le token actuel n'est pas une parenthèse ouvrante,
     return NULL; 
